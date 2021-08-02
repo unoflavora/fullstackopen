@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Persons = ({persons, filter}) => {
+const Persons = ({persons, filter, handleDelete}) => {
   if (filter !== "") {
     return persons
       .filter((person) =>
@@ -12,9 +12,9 @@ const Persons = ({persons, filter}) => {
         </p>
       ));
   }
-  return persons.map((person) => (
+  return persons.map(person => (
     <p>
-      {person.name} {person.number}
+      {person.name} {person.number} <button onClick={()=>handleDelete(person.id)}>Delete</button>
     </p>
   ));
 };
