@@ -82,10 +82,10 @@ const App = () => {
     if (window.confirm("Do you sure want to delete?")) {
       server
         .del(id)
-        .then((updatedPhonebook) => {
+        .then(() => {
           let deleted = persons.find(person => person.id === id)
           setAlert({'removed': `Information of ${deleted.name} is successfully removed`})
-          hook()
+          setPersons(persons.filter((person) => person.id !== deleted.id))
         })
         .catch((e) => console.log(e));
     }
