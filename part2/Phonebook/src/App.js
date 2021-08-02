@@ -4,12 +4,13 @@ import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 import axios from "axios";
 import server from "./services/server";
-
+import './App.css'
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [alerts, setAlert] = useState({});
 
   const hook = () => {
     axios.get("http://localhost:3001/persons").then((response) => {
@@ -39,26 +40,27 @@ const App = () => {
     };
 
     if (hasName) {
-      let id = persons.find((person) => person.name === newName).id;
-      console.log(id);
+      let personName = persons.find((person) => person.name === newName);
       if (
         window.confirm(
           `${newName} is already added to phonebook, replace old number with new one?`
         )
       ) {
         server
-          .update(id, newObject)
+          .update(personName.id, newObject)
           .then((update) =>
             setPersons(
-              persons.map(person => person.id === id ? update : person)
+              persons.map(person => person.id === personName.id ? update : person)
             )
           )
-          .catch((e) => alert(e));
-      }
+          .catch(e => {
+            setAlert({'already_removed' : `Information of ${personName.name} has already been removed from server`})
+            hook()
+            })
       setNewName("");
       setNewNumber("")
       return;
-    }
+    }}
     if (newName === "") {
       alert("Please enter your name!");
       return;
@@ -66,7 +68,10 @@ const App = () => {
 
     server
       .add(newObject)
-      .then((returned) => setPersons(persons.concat(returned)))
+      .then((returned) => {
+        setPersons(persons.concat(returned))
+        setAlert({'added':`Added ${returned.name}`})
+    })
       .catch((e) => alert(e));
 
     setNewName("");
@@ -77,13 +82,35 @@ const App = () => {
     if (window.confirm("Do you sure want to delete?")) {
       server
         .del(id)
-        .then((updatedPhonebook) => hook())
+        .then((updatedPhonebook) => {
+          let deleted = persons.find(person => person.id === id)
+          setAlert({'removed': `Information of ${deleted.name} is successfully removed`})
+          hook()
+        })
         .catch((e) => console.log(e));
     }
   };
 
+  const showAlert = (alerts) => {
+    console.log(alerts)
+    if (alerts === null){
+      return null
+    } 
+    if (alerts.removed) {
+      return <p className='removed'>{alerts.removed}</p>
+    }
+    if (alerts.added) {
+      return <p className='success'>{alerts.added}</p>
+    }
+
+    if(alerts.already_removed) {
+      return <p className='error'>{alerts.already_removed}</p>
+    }
+  }
+
   return (
     <div>
+      {showAlert(alerts)}
       <h2>Phonebook</h2>
       <Filter filter={filter} handleFilterInput={handleFilterInput} />
       <h2>add a new</h2>
@@ -98,6 +125,6 @@ const App = () => {
       <Persons persons={persons} filter={filter} handleDelete={handleDelete} />
     </div>
   );
-};
+  };
 
-export default App;
+export default App
