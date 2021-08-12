@@ -14,9 +14,9 @@ Router.post('/', async (request, response) => {
 
   if(!body.title || !body.url)
   {
-    return response.status(400).end()
+    return response.status(400).json({error:'no title or url!'})
   } else if (!request.user) {
-    return response.status(401).end()
+    return response.status(401).json({error:'no user'})
   } else {
 
     const user = request.user
