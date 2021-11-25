@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import userService from './services/user'
 import './App.css'
+import Togglable from './components/Togglable'
+import NewNote from './components/NewNote'
+import PropTypes from 'prop-types';
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -13,6 +16,8 @@ const App = () => {
   const [url, setUrl] = useState('') 
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
+
+  const visibilityRef = useRef()
 
   useEffect(() => {
     const loggedUser = userService.getUser()
@@ -50,8 +55,7 @@ const App = () => {
 
   if(user === null) {
     return (
-      <div>
-        
+      <div>        
         <h2>Login to application</h2>
         {error && <p className='error'>{error}</p>}
         <form onSubmit={handleLogin}>
@@ -85,7 +89,8 @@ const App = () => {
 
       setTimeout(() => {
         setSuccess('')
-      }, 3000)
+        window.location.reload()
+      }, `1000`)
 
    
     } catch (e) {
@@ -94,6 +99,8 @@ const App = () => {
         setError('')
       }, 3000)
     }
+
+    visibilityRef.current.toggleVisibility()
   }
 
 
@@ -108,24 +115,16 @@ const App = () => {
       {error && <p className='error'>{error}</p>}
       {success && <p className='success'>{success}</p>}
 
-
-      <form onSubmit={handleSubmit}>
-        <h2>Create new</h2>
-        <label for='title'>Title
-            <input value={title} onChange={({target}) => setTitle(target.value)} id='title' type='text'/>
-          </label>
-        <label for='author'>Author
-          <input value={author} onChange={({target}) => setAuthor(target.value)} id='author' type='text'/>
-        </label>
-        <label for='url'>URL
-          <input value={url} onChange={({target}) => setUrl(target.value)} id='url' type='text'/>
-        </label>
-        <button type='submit'>Submit</button>
-      </form>
+      <Togglable ref={visibilityRef} hideLabel='cancel' label={'create new blog'}>
+        <NewNote
+          handleSubmit={handleSubmit}
+          title={title} setTitle={setTitle} 
+          author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}/>
+      </Togglable>
       
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} />
       )}
     </div>
   )
