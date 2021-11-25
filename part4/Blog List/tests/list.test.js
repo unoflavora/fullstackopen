@@ -15,7 +15,7 @@ beforeEach(async () => {
 
   const newUser = new User(helper.newUser)
   const user = await newUser.save()
-  token = await jwt.sign({username: user.username, id:user._id}, process.env.ROUTER)
+  token = jwt.sign({username: user.username, id:user._id}, process.env.SECRET)
 
   for (let blog of helper.listWithManyBlog) {
     blog['user'] = user._id
@@ -27,7 +27,7 @@ beforeEach(async () => {
 })
 
 test('Panjang list dari blog benar', async () => {
-    const response = await api
+    await api
       .get(`/api/blogs`)
       .set('Authorization', `bearer ${token}`)
       .expect(200)

@@ -1,4 +1,21 @@
-#error {
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: fit-content;
+}
+
+.flex {
+  display: flex;
+}
+
+label {
+  display: flex;
+  gap: 5px;
+}
+
+
+.error {
   color: red;
   background: lightgrey;
   font-size: 20px;
@@ -8,7 +25,7 @@
   margin-bottom: 10px;
 }
 
-#information {
+.success {
   color: green;
   background: lightgrey;
   font-size: 20px;

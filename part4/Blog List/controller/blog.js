@@ -34,8 +34,8 @@ Router.post('/', async (request, response) => {
     })
 
 
-    const result = await blog.save()
-    response.status(201).json(result)
+    await blog.save()
+    response.status(201).json({message: 'Save Notes Successful'})
 
     user.blogs = user.blogs.concat(blog.id)
     await user.save()

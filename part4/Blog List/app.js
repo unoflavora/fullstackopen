@@ -6,11 +6,10 @@ const mongoose = require('mongoose')
 const config = require('./utils/config.js')
 const middleware = require('./utils/middleware.js')
 const logger = require('./utils/logger.js')
+
 const blogRouter = require('./controller/blog')
 const loginRouter = require('./controller/login')
 const userRouter = require('./controller/user')
-const morganBody = require('morgan-body')
-const refreshDb = require('./tests/refreshDb')
 
 require('dotenv').config()
 
@@ -21,13 +20,8 @@ const connectDB = async () => {
 
 connectDB()
 
-if (process.env.NODE_ENV === 'development') {
-  refreshDb()
-}
-
 app.use(cors())
 app.use(express.json())
-morganBody(app)
 
 app.use('/api/blogs', middleware.useExtractor, blogRouter)
 app.use('/api/users', userRouter)

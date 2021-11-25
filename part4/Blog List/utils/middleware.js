@@ -9,7 +9,7 @@ const useExtractor = async (request, response, next) => {
   if (auth) {
     if (auth.toLowerCase().startsWith('bearer ')){
       request['token'] = auth.substring(7)
-      const user = await jwt.verify(request['token'], process.env.ROUTER)
+      const user = await jwt.verify(request['token'], process.env.SECRET)
       request['user'] = user
     }
   }
@@ -37,7 +37,9 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const loggerResponse = (request, response, next) => {
-  logger.info(response)
+  if(process.env.NODE_ENV !== 'test') {
+    logger.info(response)  
+  }
   next()
 }
 
