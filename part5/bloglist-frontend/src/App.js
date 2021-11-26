@@ -40,6 +40,8 @@ const App = () => {
       const loggedUser = await userService.login(username, password)
       setUser(loggedUser)
       userService.setUser(loggedUser)
+      setUsername('')
+      setPassword('')
     } catch (e) {
       setError(e.response.data.error)
       setTimeout(() => {
@@ -65,7 +67,7 @@ const App = () => {
           <label for='password'>password
             <input value={password} onChange={({target}) => setPassword(target.value)} id='password' type='password'/>
           </label>
-          <button type='submit'>Login</button>
+          <button id="login-button" type='submit'>Login</button>
         </form>
       </div>
     )
@@ -74,24 +76,29 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-      await blogService.post(title, author, url, user)
-      setSuccess(
-        `A new blog titled ${title} by ${author} added!`
-      )
-
-      setBlogs([...blogs, {
-        title, author, url
-      }])
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-
-      setTimeout(() => {
-        setSuccess('')
-        window.location.reload()
-      }, `1000`)
-
+      const response = await blogService.post(title, author, url, user)
+      if(response.message) {
+        setSuccess(
+          `A new blog titled ${title} by ${author} added!`
+        )
+  
+        setBlogs([...blogs, {
+          ...response['newBlog']
+        }])
+  
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+  
+        setTimeout(() => {
+          setSuccess('')
+        }, `1000`)  
+      } else {
+        setError('Some error occured')
+        setTimeout(() => {
+          setError('')
+        }, 3000)
+      }   
    
     } catch (e) {
       setError(e.response.data.error)
@@ -103,13 +110,12 @@ const App = () => {
     visibilityRef.current.toggleVisibility()
   }
 
-
   return (
     <div>
       <h2>blogs</h2>
       <p>
         {user.name} Logged in 
-        <button onClick={handleLogout}>Logout</button>
+        <button id='logout-button' onClick={handleLogout}>Logout</button>
       </p>
 
       {error && <p className='error'>{error}</p>}
@@ -123,8 +129,12 @@ const App = () => {
       </Togglable>
       
 
-      {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} />
+      {blogs.sort((a,b) => b.likes - a.likes).map(blog => {
+        console.log(blog.likes)
+        return(
+          <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} setError={setError} />
+        )
+      }
       )}
     </div>
   )

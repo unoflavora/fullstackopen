@@ -11,7 +11,7 @@ function NewNote({handleSubmit, title, setTitle, author, setAuthor, url, setUrl}
     <label htmlFor='url'>URL
       <input value={url} onChange={({target}) => setUrl(target.value)} id='url' type='text'/>
     </label>
-    <button type='submit'>Submit</button>
+    <button type='submit' id='submit-button'>Submit</button>
   </form>
   );
 }

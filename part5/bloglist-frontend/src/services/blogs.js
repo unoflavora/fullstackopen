@@ -17,11 +17,13 @@ const post = async (title, author, url, user) => {
     }
   }
   
-  const request = await axios.post(baseUrl, {title, author, url}, config)
+  const request = await axios.post(baseUrl, {title, author, url, user}, config)
+  console.log(request)
   return request.data
 }
 
 const addLike = async (blog) => {
+  console.log(blog)
   const config = {
     headers: {
       'Authorization': `bearer ${getToken()}`
