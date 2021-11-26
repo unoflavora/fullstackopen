@@ -19,7 +19,7 @@ Router.post('/', async (request, response) => {
     return response.status(401).json({error:'no user'})
   } else {
 
-    const user = request.user
+    const user = await User.findById(request.user.id)
 
     if (!body.likes) {
       body.likes = 0
@@ -34,13 +34,11 @@ Router.post('/', async (request, response) => {
     })
 
 
-    await blog.save()
-    response.status(201).json({message: 'Save Notes Successful'})
+    const newBlog = await blog.save()
+    response.status(201).json({message: 'Save Notes Successful', newBlog})
 
-    user.blogs = user.blogs.concat(blog.id)
-    await user.save()
-    console.log(user)
-  
+    user.blogs = user.blogs.concat(blog._id)
+    await user.save()  
   }
 })
 
@@ -54,7 +52,7 @@ Router.delete('/:id', async (request, response) => {
     await Blog.findByIdAndDelete(id)
     return response.status(204).end()
   } else {
-    return response.status(400).json({error: 'not valid token'})
+    return response.status(401).json({error: 'You cannot delete a note by another user!'})
   }
 })
 
