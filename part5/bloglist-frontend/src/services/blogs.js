@@ -4,6 +4,7 @@ import axios from 'axios'
 const baseUrl = '/api/blogs'
 
 const getToken = () => JSON.parse(window.localStorage.getItem('user')).token
+const getUser = () => JSON.parse(window.localStorage.getItem('user'))
 
 const getAll = () => {
   const request = axios.get(baseUrl)
@@ -18,7 +19,6 @@ const post = async (title, author, url, user) => {
   }
   
   const request = await axios.post(baseUrl, {title, author, url, user}, config)
-  console.log(request)
   return request.data
 }
 
@@ -34,14 +34,14 @@ const addLike = async (blog) => {
   return request.data
 }
 
-const deleteBlog = async (blog) => {
+const deleteBlog = async (blog, user) => {
   const config = {
     headers: {
       'Authorization': `bearer ${getToken()}`
     }
   }
 
-  const request = await axios.delete(`${baseUrl}/${blog.id}`, config)
+  const request = await axios.delete(`${baseUrl}/${blog.id}`, config, {user: getUser()})
   return request.data
 }
 

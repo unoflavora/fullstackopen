@@ -61,13 +61,13 @@ const App = () => {
         <h2>Login to application</h2>
         {error && <p className='error'>{error}</p>}
         <form onSubmit={handleLogin}>
-          <label for='username'>username
+          <label htmlFor='username'>username
             <input value={username} onChange={({target}) => setUsername(target.value)} id='username' type='text'/>
           </label>
-          <label for='password'>password
+          <label htmlFor='password'>password
             <input value={password} onChange={({target}) => setPassword(target.value)} id='password' type='password'/>
           </label>
-          <button id="login-button" type='submit'>Login</button>
+          <button htmlFor="login-button" type='submit'>Login</button>
         </form>
       </div>
     )
@@ -130,7 +130,6 @@ const App = () => {
       
 
       {blogs.sort((a,b) => b.likes - a.likes).map(blog => {
-        console.log(blog.likes)
         return(
           <Blog key={blog.id} blog={blog} setBlogs={setBlogs} blogs={blogs} setError={setError} />
         )

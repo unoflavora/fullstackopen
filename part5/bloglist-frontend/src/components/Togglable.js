@@ -10,7 +10,7 @@ const Togglable = React.forwardRef((props, ref) => {
   const toggleVisibility = () => setVisibility(!visibility)
 
   Togglable.propTypes = {
-    buttonLabel: PropTypes.string.isRequired
+    label: PropTypes.string.isRequired
   }
 
   useImperativeHandle(ref, () => {
