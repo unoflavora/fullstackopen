@@ -3,8 +3,11 @@ import Togglable from './Togglable'
 import blogService from '../services/blogs'
 const Blog = (props) => {  
   const [blog, setBlog] = useState(props.blog)
+  const [visibility, setVisibility] = useState(false)
 
   const handleLike = async () => {
+    props.test ? props.test() : null
+    
     try {
       await blogService.addLike(blog)
       setBlog({...blog, likes: blog.likes + 1})
@@ -26,17 +29,23 @@ const Blog = (props) => {
     }
   }
 
+  const handleVisibility = () => setVisibility(!visibility)
+
   return (
     <div className='blog' style={blogStyle}>
-      {blog.title} 
-      <Togglable label={'view'} hideLabel={'hide'}>
-        <div>
+      {blog.title} by {blog.author}
+      <button onClick={handleVisibility}>
+        {visibility ? 'Hide' : 'Show'}
+      </button>
+
+      {visibility && 
+        <div className='hidden'>
           <p>{blog.url}</p>
-          <p>Likes: {blog.likes}  <button onClick={handleLike}>Like</button></p>
-          <p>{blog.author}</p>
+          <p>Likes: {blog.likes}  
+          <button onClick={handleLike}>Like</button></p>
           <button onClick={handleDelete}>remove</button>
         </div>
-      </Togglable>
+      }
     </div>  
 )}
 
